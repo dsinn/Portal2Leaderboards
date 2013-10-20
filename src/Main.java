@@ -94,10 +94,12 @@ public class Main {
 			final Pattern divPattern = Pattern.compile("<(/?)div[>\\s]", Pattern.CASE_INSENSITIVE);
 
 			// Date
-			bw.write(String
-					.format("<p>Loaded on %s<script type=\"text/javascript\">document.write(' (' + dateDiff(%d) + ')');</script>.</p>",
-							new Date(),
-							System.currentTimeMillis() + TimeZone.getDefault().getOffset(System.currentTimeMillis())));
+			bw
+					.write(String
+							.format(
+									"<p>Loaded on %s<script type=\"text/javascript\">document.write(' (' + dateDiff(%d) + ')');</script>.</p>",
+									new Date(), System.currentTimeMillis()
+											+ TimeZone.getDefault().getOffset(System.currentTimeMillis())));
 
 			final String[][] anchorData = new String[subset.size()][2];
 			int count = 0;
@@ -280,8 +282,8 @@ public class Main {
 				iRight = s.indexOf("</a>", iLeft);
 				final int iName = s.lastIndexOf('>', iRight) + 1;
 				output += s.substring(iLeft, iName)
-						+ s.substring(iName, iRight).replaceAll("&", "&amp;").replaceAll("<", "&lt;")
-								.replaceAll(">", "&gt;").replaceAll("\"", "&quot;");
+						+ s.substring(iName, iRight).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">",
+								"&gt;").replaceAll("\"", "&quot;");
 			}
 
 			bw.write("<td>" + output + s.substring(iRight) + "</td>");
@@ -305,6 +307,7 @@ public class Main {
 
 		final SelectionGUI frame = new SelectionGUI(lbs, subpage);
 		frame.addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}

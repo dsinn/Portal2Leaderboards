@@ -34,18 +34,13 @@ import javax.swing.tree.TreeSelectionModel;
 
 public class SelectionGUI extends JFrame {
 	private static final long serialVersionUID = 1L;
-	final protected String[][] spChapters = {
-			{ "The Courtesy Call", "Portal Gun" },
-			{ "The Cold Boot", "Laser Stairs" },
-			{ "The Return", "Ceiling Catapult" },
-			{ "The Surprise", "Column Blocker" },
-			{ "The Escape", "Turret Factory" }, { "The Fall", "Underground" },
-			{ "The Reunion", "Propulsion Intro" },
-			{ "The Itch", "Funnel Intro" },
+	final protected String[][] spChapters = { { "The Courtesy Call", "Portal Gun" },
+			{ "The Cold Boot", "Laser Stairs" }, { "The Return", "Ceiling Catapult" },
+			{ "The Surprise", "Column Blocker" }, { "The Escape", "Turret Factory" }, { "The Fall", "Underground" },
+			{ "The Reunion", "Propulsion Intro" }, { "The Itch", "Funnel Intro" },
 			{ "The Part Where He Kills You", "Finale 2" } };
-	final protected String[] coopChapters = { "Team Building",
-			"Mass and Velocity", "Hard-Light Surfaces", "Excursion Funnels",
-			"Mobility Gels", "Art Therapy" };
+	final protected String[] coopChapters = { "Team Building", "Mass and Velocity", "Hard-Light Surfaces",
+			"Excursion Funnels", "Mobility Gels", "Art Therapy" };
 	final protected LinkedHashMap<String, String> lbs;
 	final protected String subpage;
 	final protected ModePanel mp;
@@ -62,10 +57,9 @@ public class SelectionGUI extends JFrame {
 		final CheckNode sp = new CheckNode("Single-player");
 		all.add(sp);
 		int spIndex = 0;
-		CheckNode currentChapter = null;
+		CheckNode currentChapter = new CheckNode();
 		for (i = 0; !(title = lbs.get(keys[i])).matches("\\d+.+"); i++) {
-			if (spIndex < spChapters.length
-					&& title.startsWith(spChapters[spIndex][1])) {
+			if (spIndex < spChapters.length && title.startsWith(spChapters[spIndex][1])) {
 				currentChapter = new CheckNode(spChapters[spIndex++][0]);
 				sp.add(currentChapter);
 			}
@@ -87,8 +81,7 @@ public class SelectionGUI extends JFrame {
 		tree.expandPath(new TreePath(sp.getPath()));
 		tree.expandPath(new TreePath(coop.getPath()));
 		tree.setCellRenderer(new CheckRenderer());
-		tree.getSelectionModel().setSelectionMode(
-				TreeSelectionModel.SINGLE_TREE_SELECTION);
+		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		tree.putClientProperty("JTree.lineStyle", "Angled");
 		tree.addMouseListener(new NodeSelectionListener(tree));
 		final JScrollPane jsp = new JScrollPane(tree);
@@ -111,6 +104,7 @@ public class SelectionGUI extends JFrame {
 			this.tree = tree;
 		}
 
+		@Override
 		public void mouseClicked(MouseEvent e) {
 			final int row = tree.getRowForLocation(e.getX(), e.getY());
 			final TreePath path = tree.getPathForRow(row);
@@ -143,8 +137,7 @@ public class SelectionGUI extends JFrame {
 				final CheckNode node = e.nextElement();
 				if (node.isSelected() && node.id != null) {
 					final String title = lbs.get(node.id);
-					if (title.endsWith("Portals") && !mp.onlyTime.isSelected()
-							|| title.endsWith("Time")
+					if (title.endsWith("Portals") && !mp.onlyTime.isSelected() || title.endsWith("Time")
 							&& !mp.onlyPortals.isSelected()) {
 						subset.add(node.id);
 					}
@@ -169,11 +162,9 @@ class CheckRenderer extends JPanel implements TreeCellRenderer {
 		label.setForeground(UIManager.getColor("Tree.textForeground"));
 	}
 
-	public Component getTreeCellRendererComponent(JTree tree, Object value,
-			boolean isSelected, boolean expanded, boolean leaf, int row,
-			boolean hasFocus) {
-		String stringValue = tree.convertValueToText(value, isSelected,
-				expanded, leaf, row, hasFocus);
+	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean isSelected, boolean expanded,
+			boolean leaf, int row, boolean hasFocus) {
+		String stringValue = tree.convertValueToText(value, isSelected, expanded, leaf, row, hasFocus);
 		setEnabled(tree.isEnabled());
 		check.setSelected(((CheckNode) value).isSelected());
 		label.setFont(tree.getFont());
@@ -183,14 +174,15 @@ class CheckRenderer extends JPanel implements TreeCellRenderer {
 		return this;
 	}
 
+	@Override
 	public Dimension getPreferredSize() {
 		Dimension d_check = check.getPreferredSize();
 		Dimension d_label = label.getPreferredSize();
-		return new Dimension(d_check.width + d_label.width,
-				(d_check.height < d_label.height ? d_label.height
-						: d_check.height));
+		return new Dimension(d_check.width + d_label.width, (d_check.height < d_label.height ? d_label.height
+				: d_check.height));
 	}
 
+	@Override
 	public void doLayout() {
 		Dimension d_check = check.getPreferredSize();
 		Dimension d_label = label.getPreferredSize();
@@ -207,6 +199,7 @@ class CheckRenderer extends JPanel implements TreeCellRenderer {
 		label.setBounds(d_check.width, y_label, d_label.width, d_label.height);
 	}
 
+	@Override
 	public void setBackground(Color color) {
 		if (color instanceof ColorUIResource)
 			color = null;
@@ -221,19 +214,20 @@ class CheckRenderer extends JPanel implements TreeCellRenderer {
 		public TreeLabel() {
 		}
 
+		@Override
 		public void setBackground(Color color) {
 			if (color instanceof ColorUIResource)
 				color = null;
 			super.setBackground(color);
 		}
 
+		@Override
 		public void paint(Graphics g) {
 			String str;
 			if ((str = getText()) != null) {
 				if (0 < str.length()) {
 					if (isSelected) {
-						g.setColor(UIManager
-								.getColor("Tree.selectionBackground"));
+						g.setColor(UIManager.getColor("Tree.selectionBackground"));
 					} else {
 						g.setColor(UIManager.getColor("Tree.textBackground"));
 					}
@@ -241,27 +235,23 @@ class CheckRenderer extends JPanel implements TreeCellRenderer {
 					int imageOffset = 0;
 					Icon currentI = getIcon();
 					if (currentI != null) {
-						imageOffset = currentI.getIconWidth()
-								+ Math.max(0, getIconTextGap() - 1);
+						imageOffset = currentI.getIconWidth() + Math.max(0, getIconTextGap() - 1);
 					}
-					g.fillRect(imageOffset, 0, d.width - 1 - imageOffset,
-							d.height);
+					g.fillRect(imageOffset, 0, d.width - 1 - imageOffset, d.height);
 					if (hasFocus) {
-						g.setColor(UIManager
-								.getColor("Tree.selectionBorderColor"));
-						g.drawRect(imageOffset, 0, d.width - 1 - imageOffset,
-								d.height - 1);
+						g.setColor(UIManager.getColor("Tree.selectionBorderColor"));
+						g.drawRect(imageOffset, 0, d.width - 1 - imageOffset, d.height - 1);
 					}
 				}
 			}
 			super.paint(g);
 		}
 
+		@Override
 		public Dimension getPreferredSize() {
 			Dimension retDimension = super.getPreferredSize();
 			if (retDimension != null) {
-				retDimension = new Dimension(retDimension.width + 3,
-						retDimension.height);
+				retDimension = new Dimension(retDimension.width + 3, retDimension.height);
 			}
 			return retDimension;
 		}
@@ -294,8 +284,7 @@ class CheckNode extends DefaultMutableTreeNode {
 		this(userObject, true, false, id);
 	}
 
-	public CheckNode(Object userObject, boolean allowsChildren,
-			boolean isSelected, String id) {
+	public CheckNode(Object userObject, boolean allowsChildren, boolean isSelected, String id) {
 		super(userObject, allowsChildren);
 		this.isSelected = isSelected;
 		this.id = id;
